@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
             userExists = registeredUsers.stream().anyMatch(u -> u.equals(login));
         }
 
-        if(userExists&& password !=null && password.isEmpty()){
+        if(userExists && password !=null && !password.isEmpty()){
             HttpSession session = request.getSession(true);
             session.setAttribute("user", login);
             response.sendRedirect("/user/hello.jsp");
