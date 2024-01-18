@@ -13,6 +13,11 @@ import com.example.Users;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+
+    //check session attribute "user".
+    //for GET request if the session attribute "user" does not exist, redirect to the /login.jsp page, else redirect to the /user/hello.jsp.
+    //for POST request check the request parameters. "login" should exist in Users and the request parameter "password" shouldn't be empty.
+    // If parameters are correct set session attribute "user" and redirect to /user/hello.jsp, else forward to the /login.jsp.
     Users users = com.example.Users.getInstance();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,10 +38,13 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
+        boolean userExists = false;
         List<String> registeredUsers = users.getUsers();
-        boolean userExists = registeredUsers.stream().anyMatch(u -> u.equals(login));
+        if (login != null){
+            userExists = registeredUsers.stream().anyMatch(u -> u.equals(login));
+        }
 
-        if((login != null && password != null) && userExists && !password.isEmpty()){
+        if(userExists && password != null && !password.isEmpty()){
                 request.getSession(true).setAttribute("user", login);
                 response.sendRedirect("/user/hello.jsp");
         } else {
