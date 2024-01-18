@@ -9,7 +9,6 @@ import java.io.IOException;
 
 @WebFilter("/user/*")
 public class AuthFilter implements Filter {
-    //write your code here!
     @Override
     public void init(FilterConfig filterConfig) throws ServletException{}
 
@@ -17,13 +16,12 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-
         HttpSession httpSession = httpRequest.getSession(false);
 
-        if(httpSession == null || httpSession.getAttribute("user") == null){
-            httpResponse.sendRedirect("/login.jsp");
-        } else {
+        if (httpSession != null && httpSession.getAttribute("user") != null){
             chain.doFilter(request,response);
+        } else {
+            httpResponse.sendRedirect("/login.jsp");
         }
     }
 

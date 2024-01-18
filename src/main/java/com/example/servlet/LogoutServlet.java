@@ -10,15 +10,23 @@ import java.io.IOException;
 
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
 
-        if(session != null){
+        try {
+            HttpSession session = request.getSession(false);
+            String user = (String) session.getAttribute("user");
+
+            if( user ==null || user.isEmpty()){
+                throw new ServletException("User parameter is missing");
+            }else {
+                request.removeAttribute("user");
+            }
+
             session.invalidate();
+
+        }finally {
+            response.sendRedirect("/login.jsp");
         }
-
-        request.removeAttribute("user");
-
-        response.sendRedirect("/login.jsp");
     }
 }

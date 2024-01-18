@@ -14,7 +14,6 @@ import com.example.Users;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     Users users = com.example.Users.getInstance();
-    //write your code here!
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -33,7 +32,7 @@ public class LoginServlet extends HttpServlet {
         List<String> registeredUsers = users.getUsers();
 
         if(registeredUsers.stream().anyMatch(u -> u.equals(login)) && password.isEmpty()){
-            request.getSession().setAttribute("user", login);
+            request.getSession(true).setAttribute("user", login);
             response.sendRedirect("/user/hello.jsp");
         } else {
             request.getRequestDispatcher("/login.jsp").forward(request, response);
