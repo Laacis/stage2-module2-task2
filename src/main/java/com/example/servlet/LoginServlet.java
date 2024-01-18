@@ -16,12 +16,19 @@ public class LoginServlet extends HttpServlet {
     Users users = com.example.Users.getInstance();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
+            String redirectTo = "/login.jsp";
 
-        if(session.getAttribute("user") == null){
-            response.sendRedirect("/login.jsp");
-        }else {
-            response.sendRedirect("/user/hello.jsp");
+        try{
+            HttpSession session = request.getSession(false);
+            if(session == null){
+                throw new ServletException("Login: Session doesn't exist");
+            }else{
+                if(session.getAttribute("user") != null){
+                    redirectTo = "/user/hello.jsp";
+                }
+            }
+        }finally {
+            response.sendRedirect(redirectTo);
         }
     }
 
@@ -30,10 +37,11 @@ public class LoginServlet extends HttpServlet {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         List<String> registeredUsers = users.getUsers();
+        boolean userExists = registeredUsers.stream().anyMatch(u -> u.equals(login));
 
-        if(registeredUsers.stream().anyMatch(u -> u.equals(login)) && password.isEmpty()){
-            request.getSession(true).setAttribute("user", login);
-            response.sendRedirect("/user/hello.jsp");
+        if((login != null && password != null) && (userExists && password.isEmpty())){
+                request.getSession(true).setAttribute("user", login);
+                response.sendRedirect("/user/hello.jsp");
         } else {
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
