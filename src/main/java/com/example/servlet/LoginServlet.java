@@ -19,13 +19,10 @@ public class LoginServlet extends HttpServlet {
             String redirectTo = "/login.jsp";
 
         try{
-            HttpSession session = request.getSession(false);
-            if(session == null){
-                throw new ServletException("Login: Session doesn't exist");
-            }else{
-                if(session.getAttribute("user") != null){
-                    redirectTo = "/user/hello.jsp";
-                }
+            HttpSession session = request.getSession(true);
+
+            if(session.getAttribute("user") != null) {
+                redirectTo = "/user/hello.jsp";
             }
         }finally {
             response.sendRedirect(redirectTo);
@@ -39,7 +36,7 @@ public class LoginServlet extends HttpServlet {
         List<String> registeredUsers = users.getUsers();
         boolean userExists = registeredUsers.stream().anyMatch(u -> u.equals(login));
 
-        if((login != null && password != null) && (userExists && !password.isEmpty())){
+        if((login != null && password != null) && userExists && !password.isEmpty()){
                 request.getSession(true).setAttribute("user", login);
                 response.sendRedirect("/user/hello.jsp");
         } else {
