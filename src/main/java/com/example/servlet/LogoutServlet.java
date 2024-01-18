@@ -16,7 +16,9 @@ public class LogoutServlet extends HttpServlet {
         try {
             HttpSession session = request.getSession(false);
 
-            if(session != null){
+            if(session == null){
+                throw new ServletException("Logout: logging out without a valid session");
+            }else {
                 request.removeAttribute("user");
                 session.invalidate();
             }
