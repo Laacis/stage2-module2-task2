@@ -15,16 +15,13 @@ public class LogoutServlet extends HttpServlet {
 
         try {
             HttpSession session = request.getSession(false);
-            String user = (String) session.getAttribute("user");
 
-            if( user ==null || user.isEmpty()){
-                throw new ServletException("User parameter is missing");
+            if(session == null){
+                throw new ServletException("Logout: logging out without a valid session");
             }else {
                 request.removeAttribute("user");
+                session.invalidate();
             }
-
-            session.invalidate();
-
         }finally {
             response.sendRedirect("/login.jsp");
         }
